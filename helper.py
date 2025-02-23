@@ -291,7 +291,7 @@ def compute_pairwise_similarity(group, numeric_cols, categorical_cols, num_weigh
     return pd.DataFrame(similarities)
 
 def process_groups(df):
-    df = df.copy()
+    """Process the DataFrame to extract group-related features."""
     df['GroupSize'] = df.groupby(df['PassengerId'].str.split('_').str[0])['PassengerId'].transform('count')
     df['InGroup'] = df['GroupSize'] > 1
     return df.drop(columns=['PassengerId'])

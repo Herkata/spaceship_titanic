@@ -4,11 +4,10 @@ Welcome to the Spaceship Titanic Kaggle Competition! This repository contains co
 
 ## Overview
 
-The goal of this competition is to predict which passengers were transported to an alternate dimension during the collision of the Spaceship Titanic. You will be provided with a dataset containing information about the passengers and their journey on the spaceship.
+The goal of this competition is to predict which passengers were transported to an alternate dimension during the collision of the Spaceship Titanic. 
 
 ## Dataset
 
-```
 - **PassengerId**: A unique Id for each passenger. Each Id takes the form `gggg_pp` where `gggg` indicates a group the passenger is travelling with and `pp` is their number within the group. People in a group are often family members, but not always.
 - **HomePlanet**: The planet the passenger departed from, typically their planet of permanent residence.
 - **CryoSleep**: Indicates whether the passenger elected to be put into suspended animation for the duration of the voyage. Passengers in cryosleep are confined to their cabins.
@@ -19,15 +18,6 @@ The goal of this competition is to predict which passengers were transported to 
 - **RoomService, FoodCourt, ShoppingMall, Spa, VRDeck**: Amount the passenger has billed at each of the Spaceship Titanic's many luxury amenities.
 - **Name**: The first and last names of the passenger.
 - **Transported**: Whether the passenger was transported to another dimension. This is the target, the column you are trying to predict.
-```
-
-## Getting Started
-
-To get started with the competition, follow these steps:
-
-1. **Download the dataset**: You can download the dataset from the [Kaggle competition page](https://www.kaggle.com/competitions/spaceship-titanic/data).
-2. **Install dependencies**: Ensure you have the necessary libraries installed. You can use the `requirements.txt` file provided in this repository.
-3. **Run the notebook**: Use the provided Jupyter notebooks to explore the data and build your models.
 
 ## Repository Structure
 
@@ -38,13 +28,11 @@ To get started with the competition, follow these steps:
 
 ## Citation
 
-```
 @misc{spaceshiptitanic,
     title={Spaceship Titanic Kaggle Competition},
     url={https://www.kaggle.com/competitions/spaceship-titanic/overview/$citation},
     note={Accessed: [Insert Date]}
 }
-```
 
 ## License
 
