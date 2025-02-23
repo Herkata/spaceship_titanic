@@ -6,6 +6,125 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from itertools import combinations
 from sklearn.metrics.pairwise import cosine_similarity
+import scipy.stats as stats
+
+def test_proportion_difference_two_tail(data, group_column, target_column, group1, group2, confidence=0.95):
+    """
+    Conducts a statistical test for the difference in proportions of the target variable between two groups.
+    
+    Parameters:
+    - data: DataFrame containing the data.
+    - group_column: Column name that defines the groups (e.g., spending category).
+    - target_column: Column name of the binary target variable.
+    - group1: The first group to compare.
+    - group2: The second group to compare.
+    - confidence: Confidence level for the confidence interval (default: 0.95).
+    
+    Returns:
+    - Dictionary with proportion difference, p-value, and confidence interval.
+    """
+    # Count occurrences
+    n1 = data[data[group_column] == group1].shape[0]  # Sample size for group1
+    n2 = data[data[group_column] == group2].shape[0]  # Sample size for group2
+    
+    if n1 == 0 or n2 == 0:
+        raise ValueError("One of the groups has zero samples.")
+    
+    p1 = data.loc[data[group_column] == group1, target_column].mean()  # Proportion of positive cases in group1
+    p2 = data.loc[data[group_column] == group2, target_column].mean()  # Proportion of positive cases in group2
+    
+    # Proportion difference
+    prop_diff = p1 - p2
+    
+    # Standard error for difference in proportions
+    pooled_p = (p1 * n1 + p2 * n2) / (n1 + n2)  # Pooled proportion
+    se = np.sqrt(pooled_p * (1 - pooled_p) * (1/n1 + 1/n2))
+    
+    # Z-score and p-value
+    z_score = prop_diff / se
+    p_value = 2 * (1 - stats.norm.cdf(abs(z_score)))  # Two-tailed test
+    
+    # Confidence interval
+    z_crit = stats.norm.ppf(1 - (1 - confidence) / 2)
+    margin_of_error = z_crit * se
+    conf_interval = (prop_diff - margin_of_error, prop_diff + margin_of_error)
+    
+    print(f"Proportion Difference: {round(prop_diff, 4)}")
+    print(f"Z-Score: {z_score:.4f}")
+    print(f"P-Value: {p_value:.4e}")
+    print(f"{int(confidence * 100)}% Confidence Interval: ({round(conf_interval[0], 4)}, {round(conf_interval[1], 4)})")
+    
+    if p_value < (1 - confidence):
+        print("Reject the null hypothesis: There is a significant difference in proportions.")
+    else:
+        print("Fail to reject the null hypothesis: There is no significant difference in proportions.")
+
+
+def test_proportion_difference_one_tail(df, group_col, target_col, baseline_group, alternative_groups, alternative="greater", alpha=0.05):
+    """
+    Conducts a Z-test for difference in proportions and calculates the confidence interval.
+
+    Parameters:
+    - df: DataFrame containing the data
+    - group_col: Column representing categorical groups (e.g., 'HomePlanet')
+    - target_col: Binary target column (e.g., 'Transported', where 1 = transported, 0 = not)
+    - baseline_group: The reference group (e.g., 'Earth')
+    - alternative_groups: A single group (str) or multiple groups (list) for comparison
+    - alternative: Type of test ('greater', 'less', or 'two-sided')
+    - alpha: Significance level (default = 0.05 for 95% confidence interval)
+
+    Returns:
+    - p-value, confidence interval, and proportion difference
+    """
+    # Ensure alternative_groups is a list
+    if isinstance(alternative_groups, str):
+        alternative_groups = [alternative_groups]
+
+    # Baseline group stats
+    n1 = df[df[group_col] == baseline_group][target_col].count()   # Total count in baseline group
+    x1 = df[df[group_col] == baseline_group][target_col].sum()     # Transported count in baseline group
+    p1 = x1 / n1  # Proportion transported
+
+    # Alternative group stats (aggregate if multiple groups)
+    alt_df = df[df[group_col].isin(alternative_groups)]
+    n2 = alt_df[target_col].count()  # Total count in alternative groups
+    x2 = alt_df[target_col].sum()    # Transported count in alternative groups
+    p2 = x2 / n2  # Proportion transported
+
+    prop_diff = p1 - p2  # Difference in proportions
+
+    # Pooled proportion for standard error calculation
+    p_pool = (x1 + x2) / (n1 + n2)
+    se = np.sqrt(p_pool * (1 - p_pool) * (1/n1 + 1/n2))
+    
+    # Z-score
+    z_score = prop_diff / se
+
+    # Determine p-value based on test type
+    if alternative == "greater":
+        p_value = 1 - stats.norm.cdf(z_score)  # Right-tailed test (p1 > p2)
+    elif alternative == "less":
+        p_value = stats.norm.cdf(z_score)  # Left-tailed test (p1 < p2)
+    else:
+        raise ValueError("Invalid alternative hypothesis. Choose 'greater', 'less', or 'two-sided'.")
+
+    # Confidence interval (always two-tailed)
+    z_critical = stats.norm.ppf(1 - alpha/2)
+    margin_of_error = z_critical * se
+    conf_interval = (prop_diff - margin_of_error, prop_diff + margin_of_error)
+
+    # Print results
+    print(f"Proportion ({baseline_group}): {p1:.4f}, Proportion (Alternative Groups {alternative_groups}): {p2:.4f}")
+    print(f"Proportion Difference: {prop_diff:.4f}")
+    print(f"Z-score: {z_score:.2f}")
+    print(f"P-Value: {p_value:.4e}")
+    print(f"95% Confidence Interval: {conf_interval}")
+
+    if p_value < alpha:
+        print(f"Reject the null hypothesis: The proportion is {alternative}.")
+    else:
+        print(f"Fail to reject the null hypothesis: The proportion is not {alternative}.")
+
 
 def clean_notebook(notebook_path: str) -> str:
     with open(notebook_path, "r", encoding="utf-8") as f:
@@ -212,3 +331,59 @@ def convert_bool(df):
     """Converts 'CryoSleep' and 'VIP' columns to boolean dtype."""
     df[['CryoSleep', 'VIP']] = df[['CryoSleep', 'VIP']].astype('boolean')
     return df
+
+def test_proportion_difference_zero_vs_nonzero(df, column, target, alternative='greater', alpha=0.05):
+    """
+    Conducts a proportion difference test comparing passengers who spent **zero** vs. those who spent **something** 
+    on a specific category (e.g., 'Spa').
+
+    Parameters:
+    - df: DataFrame containing the data.
+    - column: Column used for splitting (e.g., 'Spa').
+    - target: Boolean target column (e.g., 'Transported' with 1 = transported).
+    - alternative: 
+        'greater' -> Nonzero spenders have a higher proportion of transport than zero spenders.
+        'less' -> Nonzero spenders have a lower proportion of transport than zero spenders.
+        'two-sided' -> There is some difference.
+    - alpha: Significance level (default 0.05).
+
+    Returns:
+    - Z-score, p-value, and confidence interval for the proportion difference.
+    """
+    # Define groups
+    zero_spenders = df[df[column] == 0]
+    nonzero_spenders = df[df[column] > 0]
+
+    # Calculate proportions
+    p1 = zero_spenders[target].mean()  # Proportion transported (zero spenders)
+    p2 = nonzero_spenders[target].mean()  # Proportion transported (nonzero spenders)
+
+    # Sample sizes
+    n1, n2 = len(zero_spenders), len(nonzero_spenders)
+
+    # Standard error
+    p_pool = (zero_spenders[target].sum() + nonzero_spenders[target].sum()) / (n1 + n2)
+    se = np.sqrt(p_pool * (1 - p_pool) * (1/n1 + 1/n2))
+
+    # Z-score
+    z_score = (p1 - p2) / se
+
+    # P-value
+    if alternative == 'greater':
+        p_value = 1 - stats.norm.cdf(z_score)
+    elif alternative == 'less':
+        p_value = stats.norm.cdf(z_score)
+    else:  # 'two-sided'
+        p_value = 2 * (1 - stats.norm.cdf(abs(z_score)))
+
+    # Confidence interval for difference
+    margin = stats.norm.ppf(1 - alpha/2) * se
+    conf_int = ((p1 - p2) - margin, (p1 - p2) + margin)
+
+    print(f"Proportion Zero Spenders: {p1:.4f} out of {n1}")
+    print(f"Proportion Nonzero Spenders: {p2:.4f} out of {n2}")
+    print(f"Proportion Difference: {p1 - p2:.4f}")
+    print(f"95% Confidence Interval: ({conf_int[0]:.4f}, {conf_int[1]:.4f})")
+    print(f"Z-score: {z_score:.4f}")
+    print(f"P-value: {p_value:.4e}")
+    
