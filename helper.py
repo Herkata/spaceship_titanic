@@ -7,6 +7,9 @@ import seaborn as sns
 from itertools import combinations
 from sklearn.metrics.pairwise import cosine_similarity
 import scipy.stats as stats
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
 
 def test_proportion_difference_two_tail(data, group_column, target_column, group1, group2, confidence=0.95):
     """
@@ -386,4 +389,56 @@ def test_proportion_difference_zero_vs_nonzero(df, column, target, alternative='
     print(f"95% Confidence Interval: ({conf_int[0]:.4f}, {conf_int[1]:.4f})")
     print(f"Z-score: {z_score:.4f}")
     print(f"P-value: {p_value:.4e}")
-    
+
+
+def impute_homeplanet(df):
+    """
+    Impute missing 'HomePlanet' values based on passengers with the same last name.
+
+    Parameters:
+    df (pd.DataFrame): Dataframe containing 'Name' and 'HomePlanet' columns.
+
+    Returns:
+    pd.DataFrame: Updated dataframe with imputed 'HomePlanet' values.
+    """
+
+    if 'Cabin' in df.columns:
+        df[['Deck', 'Num', 'Side']] = df['Cabin'].str.split('/', expand=True)
+        df['HomePlanet'] = df.apply(lambda x: 'Earth' if x['Deck'] == 'G' else ('Europa' if x['Deck'] in ['A', 'B', 'C', 'T'] else x['HomePlanet']), axis=1)
+
+    if 'Name' in df.columns and 'HomePlanet' in df.columns:
+        df[['First_name', 'Last_name']] = df['Name'].str.split(' ', expand=True)
+
+        name_homeplanet_map = df.dropna(subset=['HomePlanet']).set_index('Last_name')['HomePlanet'].to_dict()
+
+        df['HomePlanet'] = df.apply(
+            lambda x: name_homeplanet_map.get(x['Last_name'], x['HomePlanet'])
+            if pd.isna(x['HomePlanet']) else x['HomePlanet'],
+            axis=1
+        )
+
+        df['HomePlanet'].fillna('Earth', inplace=True)
+
+    return df.drop(columns=['First_name', 'Last_name'])
+
+
+def bin_age_into_decades(X):
+    """Bins Age into 10-year intervals."""
+    bins = np.arange(0, 81, 10)
+    labels = np.arange(len(bins) - 1)
+    return np.digitize(X, bins, right=True).reshape(-1, 1)
+
+def kmeans_roomnum(X):
+    """Cluster RoomNum using KMeans."""
+    X = StandardScaler().fit_transform(X)
+    kmeans = KMeans(n_clusters=6, random_state=42, n_init=10)
+    return kmeans.fit_predict(X).reshape(-1, 1)
+
+def restore_column_names(X, pipeline):
+    """Restore feature names after transformations."""
+    encoder = pipeline.named_steps['transform'].named_transformers_['cat'].named_steps['encoder']
+    cat_feature_names = encoder.get_feature_names_out(['HomePlanet', 'Destination', 'Deck', 'Side'])
+
+    all_columns = ['RoomCluster', 'AgeBin'] + ['RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck', 'TotalBill'] + list(cat_feature_names)
+
+    return pd.DataFrame(X, columns=all_columns)

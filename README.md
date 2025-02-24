@@ -26,6 +26,26 @@ The goal of this competition is to predict which passengers were transported to 
 - `helper.py`: Additional code for data processing and visualization.
 - `requirements.txt`: List of required Python libraries.
 
+## EDA 
+
+The notebook `spaceship_titanic.ipynb` contains exploratory data analysis and visualization of the dataset from different perspectives.
+
+## Model Building
+
+The notebook also contains code for building a set of machine learning models to predict the target variable `Transported`.
+
+After tuning the hyperparameters, the best performing models are selected for making predictions on the test data using a voting classifier.
+
+I also added an AutoML model using the `TPOT` library to see if it can find a better model than the ones I manually created, and included it in the final ensemble.
+
+## Results
+
+The final ensemble model achieved an accuracy of 0.80173 on the test data.
+
+## Leaderboard
+
+Follow the leaderboard on the [Kaggle competition page](https://www.kaggle.com/competitions/spaceship-titanic/leaderboard).
+
 ## Citation
 
 @misc{spaceshiptitanic,
@@ -33,6 +53,8 @@ The goal of this competition is to predict which passengers were transported to 
     url={https://www.kaggle.com/competitions/spaceship-titanic/overview/$citation},
     note={Accessed: [Insert Date]}
 }
+
+Big thank you to Samuel Cortinhas for his extremely helpful [Kaggle notebook](https://www.kaggle.com/code/samuelcortinhas/spaceship-titanic-a-complete-guide?kernelSessionId=92521620) which was used as a reference for this project.
 
 ## License
 
