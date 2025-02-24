@@ -4,7 +4,9 @@ Welcome to the Spaceship Titanic Kaggle Competition! This repository contains co
 
 ## Overview
 
-The goal of this competition is to predict which passengers were transported to an alternate dimension during the collision of the Spaceship Titanic. 
+The goal of this competition is to predict which passengers were transported to an alternate dimension during the collision of the Spaceship Titanic.
+
+Access the competition page [here](https://www.kaggle.com/competitions/spaceship-titanic/overview).
 
 ## Dataset
 
@@ -26,9 +28,26 @@ The goal of this competition is to predict which passengers were transported to 
 - `helper.py`: Additional code for data processing and visualization.
 - `requirements.txt`: List of required Python libraries.
 
-## EDA 
+## EDA
 
 The notebook `spaceship_titanic.ipynb` contains exploratory data analysis and visualization of the dataset from different perspectives.
+
+## Data Preprocessing
+
+The most important steps in data preprocessing include:
+
+- **Handling missing values**
+- Encoding categorical variables
+- Feature engineering
+- Feature scaling
+
+### Handling Missing Values
+
+The dataset contains missing values in all columns except for `Passenger_id` and the target `Transported` itself.
+
+The biggest challenge of this project is the correct imputation in all of the columns based on hidden patterns waiting to be discovered during EDA.
+
+Based on [SMORES](<https://forums.ni.com/t5/Random-Ramblings-on-LabVIEW/SMORES-SMURF-or-SCRFFMRDM/ba-p/3488988>) (Scalable, Modular, Optimized, Reusable, Extensible, Simplified) principles, I decided to use a pipeline for these steps, as it will most possibly improve performance when used on unlabeled test data with missing values.
 
 ## Model Building
 
@@ -50,7 +69,7 @@ Follow the leaderboard on the [Kaggle competition page](https://www.kaggle.com/c
 
 @misc{spaceshiptitanic,
     title={Spaceship Titanic Kaggle Competition},
-    url={https://www.kaggle.com/competitions/spaceship-titanic/overview/$citation},
+    url={<https://www.kaggle.com/competitions/spaceship-titanic/overview/$citation>},
     note={Accessed: [Insert Date]}
 }
 
