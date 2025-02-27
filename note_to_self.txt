@@ -1,0 +1,13 @@
+Imputing:
+- Cabin
+- VIP
+- Destination
+- Age
+- Spending
+- Name 
+
+Models:
+- include into pipeline
+- Add TPOT 1
+- Add TPOT 2
+- Check performances 
