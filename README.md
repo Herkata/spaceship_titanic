@@ -1,6 +1,6 @@
-# Spaceship Titanic Kaggle Competition
+# Spaceship Titanic Kaggle Competition Submission
 
-Welcome to the Spaceship Titanic Kaggle Competition! This repository contains code and resources for participating in the competition.
+This repository contains code and resources to showcase my submission to the above mentioned competition.
 
 ## Overview
 
@@ -25,7 +25,7 @@ Access the competition page [here](https://www.kaggle.com/competitions/spaceship
 
 - `spaceship_titanic_data/`: Contains the dataset files.
 - `space_titanic.ipynb`: Jupyter notebook for data exploration and model building.
-- `helper.py`: Additional code for data processing and visualization.
+- `helper.py`: Additional code moved from the notebook for better readability.
 - `requirements.txt`: List of required Python libraries.
 
 ## EDA
@@ -53,13 +53,20 @@ Based on [SMORES](<https://forums.ni.com/t5/Random-Ramblings-on-LabVIEW/SMORES-S
 
 The notebook also contains code for building a set of machine learning models to predict the target variable `Transported`.
 
-After tuning the hyperparameters, the best performing models are selected for making predictions on the test data using a voting classifier.
+After tuning the hyperparameters for the initialized models, the best performing models are selected for making predictions on the test data using a voting classifier.
 
-I also added an AutoML model using the `TPOT` library to see if it can find a better model than the ones I manually created, and included it in the final ensemble.
+I also added an AutoML model using the `TPOT` library to see if it can find a better model than the ones I manually created, and included it in the final ensemble a version with my preprocessed data pipeline and also a version 'let loose' on the raw data, to see if it discovers other methods and feature selection than I did by hand.
+
+### Model Selection
+
+I used multiple types of models, the best performing ones were:
+- LightGBM
+- Random Forest
+- SVC
 
 ## Results
 
-The final ensemble model achieved an accuracy of 0.80173 on the test data.
+The final ensemble model achieved an accuracy of 0.80173 on the provided test data.
 
 ## Leaderboard
 
