@@ -72,15 +72,9 @@ The final ensemble model achieved an accuracy of 0.80173 on the provided test da
 
 Follow the leaderboard on the [Kaggle competition page](https://www.kaggle.com/competitions/spaceship-titanic/leaderboard).
 
-## Citation
+## Credit
 
-@misc{spaceshiptitanic,
-    title={Spaceship Titanic Kaggle Competition},
-    url={<https://www.kaggle.com/competitions/spaceship-titanic/overview/$citation>},
-    note={Accessed: [Insert Date]}
-}
-
-Big thank you to Samuel Cortinhas for his extremely helpful [Kaggle notebook](https://www.kaggle.com/code/samuelcortinhas/spaceship-titanic-a-complete-guide?kernelSessionId=92521620) which was used as a reference for this project.
+Big thank you to [Samuel Cortinhas](https://github.com/samuelcortinhas) for his extremely helpful [Kaggle notebook](https://www.kaggle.com/code/samuelcortinhas/spaceship-titanic-a-complete-guide?kernelSessionId=92521620) which was used as a reference for this project.
 
 ## License
 
