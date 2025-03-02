@@ -41,8 +41,9 @@ Access the competition page [here](https://www.kaggle.com/competitions/spaceship
 - **VIP** - bool: Whether the passenger has paid for special VIP service during the voyage.
 - **RoomService, FoodCourt, ShoppingMall, Spa, VRDeck** - float: Amount the passenger has billed at each of the Spaceship Titanic's many luxury amenities.
 - **Name** - str: The first and last names of the passenger.
- 
+
 **Target:**
+
 - **Transported** - bool: Whether the passenger was transported to another dimension.
 
 As the target is categorical, we are facing a binary classification problem.
@@ -53,6 +54,10 @@ As the target is categorical, we are facing a binary classification problem.
 - `space_titanic.ipynb`: Jupyter notebook for data exploration and model building.
 - `helper.py`: Additional code moved from the notebook for better readability.
 - `requirements.txt`: List of required Python libraries.
+
+```sh
+pip install -r requirements.txt
+```
 
 ## EDA
 
@@ -105,13 +110,15 @@ Based on [SMORES](<https://forums.ni.com/t5/Random-Ramblings-on-LabVIEW/SMORES-S
 #### `HomePlanet`
 
 Imputing missing `HomePlanet` values based on the `Cabin`, `Name` and the `Destination` features, as they both show a clear tendency to have distinct groups depending on HomePlanet.
+
 - Cabin: there are certain decks "reserved" for certain planets
 - Name: passengers with the same last name come from the same planet
 - Destination: the rest of the missing values filled with the most common HomePlanet for the Destination of the traveller.
 
-#### `CryoSleep` 
+#### `CryoSleep`
 
-Imputing based on the total spending: 
+Imputing based on the total spending:
+
 - Spent money on board -> not asleep -> False
 - True otherwise
 
@@ -130,12 +137,18 @@ I also added an AutoML model using the `TPOT` library to see if it can find a be
 ### Model Selection
 
 I used multiple types of models, the **best performing** ones in bold:
+
 - LogisticRegression
 - KNN
 - SVC
 - **LightGBM**
 - **Random Forest**
 - **CatBoost**
+
+I also implemented AutoML using the `TPOT` library to see if it can find a better model than the ones I manually created.
+
+- TPOT with preprocessed data did not significantly outperform the manually created models, but I included it in the final ensemble.
+- TPOT with raw data did not found I model in 300 minutes, so I stopped it.
 
 ## Results
 
