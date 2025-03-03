@@ -122,6 +122,24 @@ Imputing based on the total spending:
 - Spent money on board -> not asleep -> False
 - True otherwise
 
+#### `Cabin`
+
+If the passenger was travelling with a group, use their cabin number.
+
+If the passenger travels solo:
+- I appointed them to the exlusive Deck for their HomePlanet
+- Used LinearRegression to determine their room number based on their group id
+- Randomly assignes the side of the aisle
+
+#### Rest of the features
+
+For the rest of the features I used simpler logic:
+
+- Assign 0 for billing if the passenger was in cryosleep, otherwise median
+- Age median -> then bin into decades
+- Destination mode
+- VIP mode (False, as VIP is meant to be exclusive)
+
 ## Statistical Inference
 
 Reviewed multiple hypotheses that I made about the data based on the plots redarding the target variable using z-test for difference in group proportion.
